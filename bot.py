@@ -144,7 +144,7 @@ def resetCount():
 	while True:
 		print("time to reset the count")
 		tweetCount = 0;
-		time.sleep(600.0 - ((time.time() - starttime) % 600.0)) ## every 10 minutes
+		time.sleep(1800.0 - ((time.time() - starttime) % 1800.0)) ## every 30 minutes
 
 
 # ===================== RUN THIS THING ========================== # 
