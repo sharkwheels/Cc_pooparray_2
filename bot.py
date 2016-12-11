@@ -118,7 +118,7 @@ def streamUsage():
 	starttime=time.time()
 	global tweetCount
 	while True:
-		print("tweetCount: {0}".format(tweetCount))
+		print("!streamUsage: tweetCount: {0}".format(tweetCount))
 		## logic for tweet count
 			## light, medium, heavy, insane
 		if tweetCount >= 0 and tweetCount <= 5:
@@ -138,13 +138,14 @@ def streamUsage():
 		time.sleep(60.0 - ((time.time() - starttime) % 60.0)) ## every minute
 
 def resetCount():
-	""" After 30 minutes. Reset the count and start again."""
+	""" After 60 minutes. Reset the count and start again."""
 	global tweetCount
 	starttime = time.time()
 	while True:
+		print("!reset: tweetCount: {0}".format(tweetCount))
 		print("time to reset the count")
 		tweetCount = 0;
-		time.sleep(1800.0 - ((time.time() - starttime) % 1800.0)) ## every 30 minutes
+		time.sleep(3600.0 - ((time.time() - starttime) % 3600.0)) ## every 30 minutes
 
 
 # ===================== RUN THIS THING ========================== # 
