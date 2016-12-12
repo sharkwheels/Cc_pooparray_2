@@ -41,7 +41,16 @@ ADAFRUIT_IO_KEY = os.environ['ADAFRUIT_IO_KEY']
 aio = Client(ADAFRUIT_IO_KEY)
 
 # ===================== VARIABLES ========================== # 
-tweetCount = 0
+
+### crash redundancy. Basic. Pull the environment variable of the last saved count
+### convert to int and assign it to tweet count, if you can't, make tweetCount zero
+try:
+	pullSaved = int(os.environ['SAVED_TWEET_COUNT'])
+	tweetCount = pullSaved
+except:
+	tweetCount = 0
+
+print("!tweetCount(saved): ",pullSaved)	
 toFind = "#fuck2016"
 # ===================== STREAMER ========================== # 
 
@@ -106,9 +115,13 @@ def processTweets(tweetsQu):
 					stripped = body.replace(toFind,'')
 					toTweet = "{0} -{1}".format(stripped,user)
 					print(toTweet)
-					## might need a thing here in case i trip a spam filter
-					twitter.update_status(status=toTweet)
-					tweetCount+=1
+					## might need a thing here in case i trip a spam 
+					## if the body is over 140 charcters throw it out
+					if(len(body) > 140):
+						print("too long, discarded")
+					else:
+						twitter.update_status(status=toTweet)
+						tweetCount+=1
 
 		tweetsQu.task_done()
 		
@@ -117,36 +130,43 @@ def streamUsage():
 	""" Every Minute check how many tweets have been tweeted on the hashtag. Then send a command to Adafruit_IO indicating how busy the hashtag is."""
 	starttime=time.time()
 	global tweetCount
+	tick = 0;
 	while True:
 		print("!streamUsage: tweetCount: {0}".format(tweetCount))
 		## logic for tweet count
 			## light, medium, heavy, insane
 		if tweetCount >= 0 and tweetCount <= 3:
 			aio.send('pooparray','10') 
-			print("light usage")
-		elif tweetCount > 3 and tweetCount <= 10:
+			print("light usage: cmd-10")
+		elif tweetCount > 3 and tweetCount <= 5:
 			aio.send('pooparray','50') 
-		elif tweetCount > 10 and tweetCount <= 30:
+		elif tweetCount > 5 and tweetCount <= 10:
 			aio.send('pooparray','100')
-			print("medium usage")
-		elif tweetCount > 30 and tweetCount <= 50:
+			print("medium usage: cmd-100")
+		elif tweetCount > 10 and tweetCount <= 30:
 			aio.send('pooparray','200')
-			print("heavy usage")
-		elif tweetCount > 50:
+			print("heavy usage: cmd-200")
+		elif tweetCount > 30:
 			aio.send('pooparray','300')
-			print("INSANE")
+			print("INSANE: cmd-300")
+		toSave = str(tweetCount)
+		## every minute save the tweetCount as a string to the environment variable. 
+		os.environ['SAVED_TWEET_COUNT'] = toSave
+		
+		## keep track of the minutes
+		## reset everything every 5 hours, because why the fuck not right?
+		## meh don't need a reset right now
+
+		tick +=1
+		print("tick: ",tick)
+		"""
+		if(tick == 300):
+			tick = 0; ## five hours
+			tweetCount = 0;
+			os.environ['SAVED_TWEET_COUNT'] = "0"
+		"""
+		
 		time.sleep(60.0 - ((time.time() - starttime) % 60.0)) ## every minute
-
-def resetCount():
-	""" After 60 minutes. Reset the count and start again."""
-	global tweetCount
-	starttime = time.time()
-	while True:
-		print("!reset: tweetCount: {0}".format(tweetCount))
-		print("time to reset the count")
-		tweetCount = 0;
-		time.sleep(7200.0 - ((time.time() - starttime) % 7200.0)) ## every 2 hours
-
 
 # ===================== RUN THIS THING ========================== # 
 		
@@ -155,13 +175,13 @@ try:
 	tweet_queue = Queue()
 	t1 = Thread(target=streamTweets,args=(tweet_queue,))
 	t2 = Thread(target=streamUsage)
-	t3 = Thread(target=resetCount)
+	#t3 = Thread(target=resetCount)
 	t1.setDaemon(True)
 	t2.setDaemon(True)
-	t3.setDaemon(True)
+	#t3.setDaemon(True)
 	t1.start()
 	t2.start()
-	t3.start()
+	#t3.start()
 	processTweets(tweet_queue)
 	while True:
 		pass
@@ -171,7 +191,30 @@ except KeyboardInterrupt:
 
 # ===================== OLD SHIT ========================== # 
 
+	
 """
+def resetCount():
+	## After 2 hours. Reset the count and start again. Remember Python does time in seconds. 
+	global tweetCount
+	print("!reset: tweetCount: {0}".format(tweetCount))
+	print("time to reset the count")
+	tweetCount = 0;
+	print("!reset: tweetCount: {0}".format(tweetCount))
+
+	
+	starttime = time.time()
+	while True:
+		print("!reset: tweetCount: {0}".format(tweetCount))
+		print("time to reset the count")
+		tweetCount = 0;
+		print("!reset: tweetCount: {0}".format(tweetCount))
+		## also reset the environment variable
+		#toSave = str(tweetCount)
+		#os.environ['SAVED_TWEET_COUNT'] = toSave 
+		time.sleep(7200.0 - ((time.time() - starttime) % 7200.0)) ## every 2 hours
+"""
+"""
+
 # ===================== TWITTER SETUP ========================== # 
 
 CONSUMER_KEY = os.environ['CONSUMER_KEY']
