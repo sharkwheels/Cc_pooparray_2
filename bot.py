@@ -160,8 +160,8 @@ def streamUsage():
 		tick +=1
 		print("tick: ",tick)
 		
-		if(tick == 300):
-			tick = 0; ## five hours
+		if(tick == 480):
+			tick = 0; ## eight hours
 			tweetCount = 0;
 			os.environ['SAVED_TWEET_COUNT'] = "3" ## reset the saved tweet count as well
 		
