@@ -121,18 +121,18 @@ def streamUsage():
 		print("!streamUsage: tweetCount: {0}".format(tweetCount))
 		## logic for tweet count
 			## light, medium, heavy, insane
-		if tweetCount >= 0 and tweetCount <= 5:
+		if tweetCount >= 0 and tweetCount <= 3:
 			aio.send('pooparray','10') 
 			print("light usage")
-		elif tweetCount > 5 and tweetCount <= 20:
+		elif tweetCount > 3 and tweetCount <= 10:
 			aio.send('pooparray','50') 
-		elif tweetCount > 20 and tweetCount <= 50:
+		elif tweetCount > 10 and tweetCount <= 30:
 			aio.send('pooparray','100')
 			print("medium usage")
-		elif tweetCount > 50 and tweetCount <= 100:
+		elif tweetCount > 30 and tweetCount <= 50:
 			aio.send('pooparray','200')
 			print("heavy usage")
-		elif tweetCount > 100:
+		elif tweetCount > 50:
 			aio.send('pooparray','300')
 			print("INSANE")
 		time.sleep(60.0 - ((time.time() - starttime) % 60.0)) ## every minute
@@ -145,7 +145,7 @@ def resetCount():
 		print("!reset: tweetCount: {0}".format(tweetCount))
 		print("time to reset the count")
 		tweetCount = 0;
-		time.sleep(3600.0 - ((time.time() - starttime) % 3600.0)) ## every 30 minutes
+		time.sleep(7200.0 - ((time.time() - starttime) % 7200.0)) ## every 2 hours
 
 
 # ===================== RUN THIS THING ========================== # 
