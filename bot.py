@@ -135,15 +135,15 @@ def streamUsage():
 		print("!streamUsage: tweetCount: {0}".format(tweetCount))
 		## logic for tweet count
 			## light, medium, heavy, insane
-		if tweetCount >= 0 and tweetCount <= 3:
+		if tweetCount >= 0 and tweetCount <= 5:
 			aio.send('pooparray','10') 
 			print("light usage: cmd-10")
-		elif tweetCount > 3 and tweetCount <= 5:
-			aio.send('pooparray','50') 
 		elif tweetCount > 5 and tweetCount <= 10:
+			aio.send('pooparray','50') 
+		elif tweetCount > 10 and tweetCount <= 20:
 			aio.send('pooparray','100')
 			print("medium usage: cmd-100")
-		elif tweetCount > 10 and tweetCount <= 30:
+		elif tweetCount > 20 and tweetCount <= 30:
 			aio.send('pooparray','200')
 			print("heavy usage: cmd-200")
 		elif tweetCount > 30:
